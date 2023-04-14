@@ -1,2 +1,4 @@
 snowflake-snowpark-python[pandas]
 snowflake-cli-labs
+pre-commit
+python-dotenv

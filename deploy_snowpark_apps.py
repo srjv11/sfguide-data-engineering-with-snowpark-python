@@ -1,7 +1,7 @@
-import sys;
-import os;
+import os
+import sys
 
-ignore_folders = ['__pycache__', '.ipynb_checkpoints']
+ignore_folders = ["__pycache__", ".ipynb_checkpoints"]
 
 if len(sys.argv) != 2:
     print("Root directory is required")
@@ -17,13 +17,13 @@ for (directory_path, directory_names, file_names) in os.walk(root_directory):
 
     # Skip any folders we want to ignore
     if base_name in ignore_folders:
-#        print(f"Skipping ignored folder {directory_path}")
+        #        print(f"Skipping ignored folder {directory_path}")
         continue
 
     # An app.toml file in the folder is our indication that this folder contains
     # a snowcli Snowpark App
     if not "app.toml" in file_names:
-#        print(f"Skipping non-app folder {directory_path}")
+        #        print(f"Skipping non-app folder {directory_path}")
         continue
 
     # Next determine what type of app it is

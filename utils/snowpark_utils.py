@@ -1,6 +1,9 @@
-from snowflake.snowpark import Session
 import os
 from typing import Optional
+
+from dotenv import load_dotenv
+from snowflake.snowpark import Session
+
 
 # Class to store a singleton connection option
 class SnowflakeConnection(object):
@@ -14,8 +17,11 @@ class SnowflakeConnection(object):
     def connection(self, val):
         type(self)._connection = val
 
+
 # Function to return a configured Snowpark session
 def get_snowpark_session() -> Session:
+    # set vars into env
+    load_dotenv()
     # if running in snowflake
     if SnowflakeConnection().connection:
         # Not sure what this does?
@@ -23,10 +29,8 @@ def get_snowpark_session() -> Session:
     # if running locally with a config file
     # TODO: Look for a creds.json style file. This should be the way all snowpark
     # related tools work IMO
-    # if using snowsql config, like snowcli does
-    elif os.path.exists(os.path.expanduser('~/.snowsql/config')):
-        snowpark_config = get_snowsql_config()
-        SnowflakeConnection().connection = Session.builder.configs(snowpark_config).create()
+
+
     # otherwise configure from environment variables
     elif "SNOWSQL_ACCOUNT" in os.environ:
         snowpark_config = {
@@ -36,9 +40,18 @@ def get_snowpark_session() -> Session:
             "role": os.environ["SNOWSQL_ROLE"],
             "warehouse": os.environ["SNOWSQL_WAREHOUSE"],
             "database": os.environ["SNOWSQL_DATABASE"],
-            "schema": os.environ["SNOWSQL_SCHEMA"]
+            "schema": os.environ["SNOWSQL_SCHEMA"],
         }
-        SnowflakeConnection().connection = Session.builder.configs(snowpark_config).create()
+        SnowflakeConnection().connection = Session.builder.configs(
+            snowpark_config
+        ).create()
+        
+    # if using snowsql config, like snowcli does
+    elif os.path.exists(os.path.expanduser("~/.snowsql/config")):
+        snowpark_config = get_snowsql_config()
+        SnowflakeConnection().connection = Session.builder.configs(
+            snowpark_config
+        ).create()
 
     if SnowflakeConnection().connection:
         return SnowflakeConnection().connection  # type: ignore
@@ -51,24 +64,24 @@ def get_snowpark_session() -> Session:
 # TODO: It would be nice to get rid of this entirely and always use creds.json but
 # need to update snowcli to make that happen
 def get_snowsql_config(
-    connection_name: str = 'dev',
-    config_file_path: str = os.path.expanduser('~/.snowsql/config'),
+    connection_name: str = "dev",
+    config_file_path: str = os.path.expanduser("~/.snowsql/config"),
 ) -> dict:
     import configparser
 
     snowsql_to_snowpark_config_mapping = {
-        'account': 'account',
-        'accountname': 'account',
-        'username': 'user',
-        'password': 'password',
-        'rolename': 'role',
-        'warehousename': 'warehouse',
-        'dbname': 'database',
-        'schemaname': 'schema'
+        "account": "account",
+        "accountname": "account",
+        "username": "user",
+        "password": "password",
+        "rolename": "role",
+        "warehousename": "warehouse",
+        "dbname": "database",
+        "schemaname": "schema",
     }
     try:
         config = configparser.ConfigParser(inline_comment_prefixes="#")
-        connection_path = 'connections.' + connection_name
+        connection_path = "connections." + connection_name
 
         config.read(config_file_path)
         session_config = config[connection_path]
@@ -79,6 +92,4 @@ def get_snowsql_config(
         }
         return session_config_dict
     except Exception:
-        raise Exception(
-            "Error getting snowsql config details"
-        )
+        raise Exception("Error getting snowsql config details")

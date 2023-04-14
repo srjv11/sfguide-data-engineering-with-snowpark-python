@@ -38,7 +38,7 @@ Weather Source in the Snowflake Data Marketplace by following these steps:
                  -> Click the blue "Get" button
                      -> Under "Options", adjust the Database name to read "FROSTBYTE_WEATHERSOURCE" (all capital letters)
                         -> Grant to "HOL_ROLE"
-    
+
 That's it... we don't have to do anything from here to keep this data updated.
 The provider will do that for us and data sharing means we are always seeing
 whatever they they have published.

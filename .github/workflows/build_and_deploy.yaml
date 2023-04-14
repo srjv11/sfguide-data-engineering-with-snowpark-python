@@ -1,6 +1,6 @@
 name: Deploy Snowpark Apps
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on:
   push:
     branches:
